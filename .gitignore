@@ -37,3 +37,6 @@ out/
 .vscode/
 node
 node_modules
+
+### Maven ###
+target/
