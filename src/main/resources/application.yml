@@ -6,3 +6,37 @@
   - Указать порт приложения.
   - Настроить параметры безопасности и JWT.
   - Включить Swagger UI.
+
+spring:
+  application:
+    name: bank-cards
+  profiles:
+    active: development
+  datasource:
+    url: jdbc:postgresql://localhost:5432/bank_cards
+    username: sames
+    password: sames
+  jpa:
+    generate-ddl: false
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.yaml
+    enabled: true
+  output:
+    ansi:
+      enabled: always
+
+jwt:
+  secret: ${JWT_SECRET}
+  expiration: 86400000
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui
+  api-docs:
+    path: /api-docs
