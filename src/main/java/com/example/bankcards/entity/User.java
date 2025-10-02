@@ -7,6 +7,7 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -21,12 +22,13 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import static jakarta.persistence.GenerationType.IDENTITY;
 
@@ -39,7 +41,6 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @EntityListeners(AuditingEntityListener.class)
 public class User implements UserDetails, BaseEntity{
-
     @Id
     @GeneratedValue(strategy = IDENTITY)
     @EqualsAndHashCode.Include
@@ -58,24 +59,17 @@ public class User implements UserDetails, BaseEntity{
     private String email;
 
     @Enumerated(EnumType.STRING)
-    private Role role;
+    @OneToMany
+    private Set<Role> role = new HashSet<>();
+
+    @Column
+    @OneToMany(mappedBy = "cardOwner")
+    private Set<Card> cards = new HashSet<>();
 
     @NotNull
     @NotBlank
     @Size(min = 3)
     private String password;
-
-    @Column
-    private boolean isAccountNonExpired = true;
-
-    @Column
-    private boolean isAccountNonLocked = true;
-
-    @Column
-    private boolean isCredentialsNonExpired = true;
-
-    @Column
-    private boolean isEnabled = true;
 
     @CreatedDate
     private LocalDate createdAt;
@@ -90,7 +84,7 @@ public class User implements UserDetails, BaseEntity{
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role.name()));
+        return new ArrayList<GrantedAuthority>();
     }
 
     @Override
@@ -100,21 +94,21 @@ public class User implements UserDetails, BaseEntity{
 
     @Override
     public boolean isAccountNonExpired() {
-        return isAccountNonExpired;
+        return true;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return isAccountNonLocked;
+        return true;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return isCredentialsNonExpired;
+        return true;
     }
 
     @Override
     public boolean isEnabled() {
-        return isEnabled;
+        return true;
     }
 }
